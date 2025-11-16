@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proxy-client
+  namespace: ecommerce-dev
+  labels:
+    app: proxy-client
+spec:
+  replicas: 1  # Reducido a 1 para desarrollo y cuentas estudiante
+  strategy:
+    type: Recreate  # Evita problemas de recursos al actualizar en dev
+  selector:
+    matchLabels:
+      app: proxy-client
+  template:
+    metadata:
+      labels:
+        app: proxy-client
+    spec:
+      containers:
+      - name: proxy-client
+        image: <REGISTRY>/proxy-client:0.1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8900
+          name: http
+        envFrom:
+        - configMapRef:
+            name: proxy-client-config
+        resources:
+          requests:
+            memory: "256Mi"  # Optimizado para desarrollo
+            cpu: "100m"      # Optimizado para desarrollo
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /app/actuator/health
+            port: 8900
+          initialDelaySeconds: 90
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /app/actuator/health
+            port: 8900
+          initialDelaySeconds: 60
+          periodSeconds: 5
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxy-client
+  namespace: ecommerce-dev
+  labels:
+    app: proxy-client
+spec:
+  type: ClusterIP  # Proxy Client es accedido vía API Gateway
+  ports:
+  - port: 8900
+    targetPort: 8900
+    protocol: TCP
+    name: http
+  selector:
+    app: proxy-client
+

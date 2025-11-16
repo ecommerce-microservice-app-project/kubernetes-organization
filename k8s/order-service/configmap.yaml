@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-service-config
+  namespace: ecommerce-dev
+data:
+  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://service-discovery.ecommerce-dev.svc.cluster.local:8761/eureka/"
+  SPRING_CONFIG_IMPORT: "optional:configserver:http://cloud-config.ecommerce-dev.svc.cluster.local:9296"
+  SPRING_PROFILES_ACTIVE: "dev"
+  SPRING_ZIPKIN_BASE_URL: "http://zipkin.ecommerce-dev.svc.cluster.local:9411/"
+  # Configuración Eureka para Kubernetes: usar IP del pod en lugar de localhost
+  EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+  EUREKA_INSTANCE_HOSTNAME: "order-service.ecommerce-dev.svc.cluster.local"
+
