@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: favourite-service
+  name: payment-service
   namespace: ecommerce-dev
   labels:
-    app: favourite-service
+    app: payment-service
 spec:
   replicas: 1  # Reducido a 1 para desarrollo y cuentas estudiante
   strategy:
     type: Recreate  # Evita problemas de recursos al actualizar en dev
   selector:
     matchLabels:
-      app: favourite-service
+      app: payment-service
   template:
     metadata:
       labels:
-        app: favourite-service
+        app: payment-service
     spec:
       tolerations:
       - key: environment
@@ -23,15 +23,15 @@ spec:
         value: production
         effect: NoSchedule
       containers:
-      - name: favourite-service
-        image: <REGISTRY>/favourite-service:0.1.0
+      - name: payment-service
+        image: <REGISTRY>/payment-service:0.1.0
         imagePullPolicy: Always
         ports:
-        - containerPort: 8800
+        - containerPort: 8400
           name: http
         envFrom:
         - configMapRef:
-            name: favourite-service-config
+            name: payment-service-config
         resources:
           requests:
             memory: "256Mi"  # Optimizado para desarrollo
@@ -41,16 +41,16 @@ spec:
             cpu: "500m"
         livenessProbe:
           httpGet:
-            path: /favourite-service/actuator/health
-            port: 8800
+            path: /payment-service/actuator/health
+            port: 8400
           initialDelaySeconds: 120
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /favourite-service/actuator/health
-            port: 8800
+            path: /payment-service/actuator/health
+            port: 8400
           initialDelaySeconds: 90
           periodSeconds: 5
           timeoutSeconds: 5
@@ -60,17 +60,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: favourite-service
+  name: payment-service
   namespace: ecommerce-dev
   labels:
-    app: favourite-service
+    app: payment-service
 spec:
   type: ClusterIP
   ports:
-  - port: 8800
-    targetPort: 8800
+  - port: 8400
+    targetPort: 8400
     protocol: TCP
     name: http
   selector:
-    app: favourite-service
+    app: payment-service
 
