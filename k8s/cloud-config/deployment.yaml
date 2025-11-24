@@ -17,6 +17,11 @@ spec:
       labels:
         app: cloud-config
     spec:
+      tolerations:
+      - key: environment
+        operator: Equal
+        value: production
+        effect: NoSchedule
       containers:
       - name: cloud-config
         image: <REGISTRY>/cloud-config:0.1.0  # Reemplazado por pipeline según rama
