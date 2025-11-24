@@ -17,6 +17,15 @@ spec:
       labels:
         app: user-service
     spec:
+      tolerations:
+      - key: environment
+        operator: Equal
+        value: production
+        effect: NoSchedule
+      - key: components.gke.io/gke-managed-components
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
       containers:
       - name: user-service
         image: <REGISTRY>/user-service:0.1.0
@@ -29,8 +38,8 @@ spec:
             name: user-service-config
         resources:
           requests:
-            memory: "256Mi"  # Optimizado para desarrollo
-            cpu: "100m"      # Optimizado para desarrollo
+            memory: "64Mi"   # Mínimo para ajustarse a recursos disponibles
+            cpu: "25m"       # Mínimo para ajustarse a recursos disponibles
           limits:
             memory: "512Mi"
             cpu: "500m"

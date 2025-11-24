@@ -22,6 +22,10 @@ spec:
         operator: Equal
         value: production
         effect: NoSchedule
+      - key: components.gke.io/gke-managed-components
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
       containers:
       - name: shipping-service
         image: <REGISTRY>/shipping-service:0.1.0
@@ -34,8 +38,8 @@ spec:
             name: shipping-service-config
         resources:
           requests:
-            memory: "256Mi"  # Optimizado para desarrollo
-            cpu: "100m"      # Optimizado para desarrollo
+            memory: "64Mi"   # Mínimo para ajustarse a recursos disponibles
+            cpu: "25m"       # Mínimo para ajustarse a recursos disponibles
           limits:
             memory: "512Mi"
             cpu: "500m"
