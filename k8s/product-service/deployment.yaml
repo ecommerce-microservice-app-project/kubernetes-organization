@@ -43,14 +43,16 @@ spec:
           httpGet:
             path: /product-service/actuator/health
             port: 8500
-          initialDelaySeconds: 90
+          initialDelaySeconds: 120
           periodSeconds: 10
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /product-service/actuator/health
             port: 8500
-          initialDelaySeconds: 60
+          initialDelaySeconds: 90
           periodSeconds: 5
+          timeoutSeconds: 5
 
 ---
 apiVersion: v1
