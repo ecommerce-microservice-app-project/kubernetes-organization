@@ -17,6 +17,11 @@ spec:
       labels:
         app: product-service
     spec:
+      tolerations:
+      - key: environment
+        operator: Equal
+        value: production
+        effect: NoSchedule
       containers:
       - name: product-service
         image: <REGISTRY>/product-service:0.1.0
