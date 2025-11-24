@@ -22,6 +22,10 @@ spec:
         operator: Equal
         value: production
         effect: NoSchedule
+      - key: components.gke.io/gke-managed-components
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
       containers:
       - name: payment-service
         image: <REGISTRY>/payment-service:0.1.0
@@ -34,8 +38,8 @@ spec:
             name: payment-service-config
         resources:
           requests:
-            memory: "256Mi"  # Optimizado para desarrollo
-            cpu: "100m"      # Optimizado para desarrollo
+            memory: "128Mi"  # Reducido para ajustarse a recursos disponibles
+            cpu: "50m"       # Reducido para ajustarse a recursos disponibles
           limits:
             memory: "512Mi"
             cpu: "500m"
