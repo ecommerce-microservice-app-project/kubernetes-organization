@@ -22,6 +22,10 @@ spec:
         operator: Equal
         value: production
         effect: NoSchedule
+      - key: components.gke.io/gke-managed-components
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
       containers:
       - name: product-service
         image: <REGISTRY>/product-service:0.1.0
