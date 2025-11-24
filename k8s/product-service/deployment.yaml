@@ -38,8 +38,8 @@ spec:
             name: product-service-config
         resources:
           requests:
-            memory: "256Mi"  # Optimizado para desarrollo
-            cpu: "100m"      # Optimizado para desarrollo
+            memory: "128Mi"  # Reducido para ajustarse a recursos disponibles
+            cpu: "50m"       # Reducido para ajustarse a recursos disponibles
           limits:
             memory: "512Mi"
             cpu: "500m"
