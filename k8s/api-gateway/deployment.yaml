@@ -17,6 +17,11 @@ spec:
       labels:
         app: api-gateway
     spec:
+      tolerations:
+      - key: environment
+        operator: Equal
+        value: production
+        effect: NoSchedule
       containers:
       - name: api-gateway
         image: <REGISTRY>/api-gateway:0.1.0
