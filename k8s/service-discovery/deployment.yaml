@@ -17,6 +17,11 @@ spec:
       labels:
         app: service-discovery
     spec:
+      tolerations:
+      - key: environment
+        operator: Equal
+        value: production
+        effect: NoSchedule
       containers:
       - name: service-discovery
         image: <REGISTRY>/service-discovery:0.1.0  # Reemplazado por pipeline según rama
