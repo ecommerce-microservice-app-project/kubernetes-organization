@@ -17,6 +17,11 @@ spec:
       labels:
         app: order-service
     spec:
+      tolerations:
+      - key: environment
+        operator: Equal
+        value: production
+        effect: NoSchedule
       containers:
       - name: order-service
         image: <REGISTRY>/order-service:0.1.0
