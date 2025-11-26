@@ -18,6 +18,7 @@ spec:
       labels:
         app: cloud-config
     spec:
+      serviceAccountName: cloud-config-sa  # Usar ServiceAccount con permisos RBAC
       tolerations:
       - key: environment
         operator: Equal

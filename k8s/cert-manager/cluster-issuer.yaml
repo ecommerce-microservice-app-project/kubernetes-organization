@@ -1,0 +1,22 @@
+---
+# ClusterIssuer para Let's Encrypt
+# Esto permite que Cert-Manager obtenga certificados automáticamente
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # Let's Encrypt production server
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # Email para notificaciones (cambiar por tu email)
+    email: tu-email@ejemplo.com
+    # Almacenar clave privada en un Secret
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    # Método de validación: HTTP-01 (usa un challenge HTTP)
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+

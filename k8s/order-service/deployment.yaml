@@ -18,6 +18,7 @@ spec:
       labels:
         app: order-service
     spec:
+      serviceAccountName: order-service-sa  # Usar ServiceAccount con permisos RBAC
       tolerations:
       - key: environment
         operator: Equal

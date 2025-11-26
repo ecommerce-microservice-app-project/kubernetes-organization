@@ -1,0 +1,34 @@
+---
+# Ingress para API Gateway con TLS usando Cert-Manager
+# Requiere: Ingress Controller (NGINX) y Cert-Manager instalados
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-gateway-ingress
+  namespace: <NAMESPACE>
+  labels:
+    app: api-gateway
+  annotations:
+    # Cert-Manager: obtiene certificado automáticamente de Let's Encrypt
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # NGINX: redirigir HTTP a HTTPS
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.alianzadelamagiaeterna.com  # Tu subdominio
+      secretName: api-gateway-tls  # Cert-Manager creará este Secret automáticamente
+  rules:
+    - host: api.alianzadelamagiaeterna.com  # Tu subdominio
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+

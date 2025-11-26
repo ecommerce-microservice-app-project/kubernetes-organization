@@ -8,12 +8,22 @@ Este directorio contiene los manifiestos de Kubernetes para desplegar los micros
 k8s/
 ├── namespace.yaml              # Namespaces para dev, stage, prod
 ├── service-discovery/         # Service Discovery (Eureka)
-│   └── deployment.yaml
+│   ├── deployment.yaml
+│   └── rbac.yaml              # RBAC: ServiceAccount, Role, RoleBinding
 ├── cloud-config/              # Cloud Config Server
-│   └── deployment.yaml
+│   ├── deployment.yaml
+│   └── rbac.yaml
+├── api-gateway/               # API Gateway
+│   ├── deployment.yaml
+│   ├── rbac.yaml
+│   ├── ingress.yaml           # Ingress con TLS
+│   ├── tls-secret.yaml        # Template para Secret TLS
+│   └── README-TLS.md          # Documentación TLS
 ├── product-service/           # Product Service
 │   ├── deployment.yaml
-│   └── configmap.yaml
+│   ├── configmap.yaml
+│   └── rbac.yaml
+├── RBAC.md                    # Documentación RBAC
 └── README.md
 ```
 
@@ -26,23 +36,45 @@ Los servicios deben desplegarse en el siguiente orden debido a las dependencias:
    kubectl apply -f k8s/namespace.yaml
    ```
 
-2. **Service Discovery** (Eureka) - Puerto 8761
+2. **RBAC** (antes de los deployments)
    ```bash
-   # Reemplazar <REGISTRY> con tu registry de contenedores
+   # Aplicar RBAC para cada servicio
+   kubectl apply -f k8s/service-discovery/rbac.yaml
+   kubectl apply -f k8s/cloud-config/rbac.yaml
+   kubectl apply -f k8s/api-gateway/rbac.yaml
+   # ... resto de servicios
+   ```
+   Ver [RBAC.md](./RBAC.md) para más detalles.
+
+3. **Service Discovery** (Eureka) - Puerto 8761
+   ```bash
+   # Reemplazar <REGISTRY> y <NAMESPACE> según ambiente
    sed -i 's|<REGISTRY>|ghcr.io/tu-usuario|g' k8s/service-discovery/deployment.yaml
+   sed -i 's|<NAMESPACE>|ecommerce-prod|g' k8s/service-discovery/deployment.yaml
    kubectl apply -f k8s/service-discovery/deployment.yaml
    ```
 
-3. **Cloud Config** - Puerto 9296
+4. **Cloud Config** - Puerto 9296
    ```bash
    sed -i 's|<REGISTRY>|ghcr.io/tu-usuario|g' k8s/cloud-config/deployment.yaml
+   sed -i 's|<NAMESPACE>|ecommerce-prod|g' k8s/cloud-config/deployment.yaml
    kubectl apply -f k8s/cloud-config/deployment.yaml
    ```
 
-4. **Product Service** - Puerto 8500
+5. **API Gateway** - Puerto 8080
+   ```bash
+   sed -i 's|<REGISTRY>|ghcr.io/tu-usuario|g' k8s/api-gateway/deployment.yaml
+   sed -i 's|<NAMESPACE>|ecommerce-prod|g' k8s/api-gateway/deployment.yaml
+   kubectl apply -f k8s/api-gateway/deployment.yaml
+   
+   # Opcional: Configurar TLS (ver k8s/api-gateway/README-TLS.md)
+   ```
+
+6. **Product Service** - Puerto 8500
    ```bash
    kubectl apply -f k8s/product-service/configmap.yaml
    sed -i 's|<REGISTRY>|ghcr.io/tu-usuario|g' k8s/product-service/deployment.yaml
+   sed -i 's|<NAMESPACE>|ecommerce-prod|g' k8s/product-service/deployment.yaml
    kubectl apply -f k8s/product-service/deployment.yaml
    ```
 
@@ -84,7 +116,29 @@ Todos los servicios tienen health checks configurados:
 ## Recursos
 
 Cada servicio tiene límites de recursos configurados:
-- Service Discovery: 256Mi-512Mi RAM, 250m-500m CPU
-- Cloud Config: 256Mi-512Mi RAM, 250m-500m CPU
-- Product Service: 512Mi-1Gi RAM, 250m-500m CPU
+- Service Discovery: 128Mi-512Mi RAM, 50m-500m CPU
+- Cloud Config: 128Mi-512Mi RAM, 50m-500m CPU
+- Product Service: 128Mi-512Mi RAM, 50m-500m CPU
+
+## Seguridad
+
+### RBAC (Role-Based Access Control)
+
+Todos los servicios tienen configurado RBAC con permisos mínimos necesarios.
+
+- **ServiceAccount**: Identidad del pod
+- **Role**: Permisos en el namespace
+- **RoleBinding**: Asocia ServiceAccount con Role
+
+Ver [RBAC.md](./RBAC.md) para más detalles.
+
+### TLS (Transport Layer Security)
+
+El API Gateway puede configurarse con TLS para comunicación HTTPS.
+
+- **Ingress con TLS**: Terminación TLS en el Ingress Controller
+- **Certificados autofirmados**: Para pruebas sin dominio
+- **Cert-Manager**: Para certificados automáticos (Let's Encrypt)
+
+Ver [api-gateway/README-TLS.md](./api-gateway/README-TLS.md) para más detalles.
 

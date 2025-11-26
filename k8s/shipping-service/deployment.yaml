@@ -18,6 +18,7 @@ spec:
       labels:
         app: shipping-service
     spec:
+      serviceAccountName: shipping-service-sa  # Usar ServiceAccount con permisos RBAC
       tolerations:
       - key: environment
         operator: Equal
