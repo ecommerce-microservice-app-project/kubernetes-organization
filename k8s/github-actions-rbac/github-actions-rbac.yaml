@@ -20,6 +20,11 @@ rules:
   - apiGroups: [""]
     resources: ["serviceaccounts"]
     verbs: ["get", "list", "create", "update", "patch", "delete"]
+  # Permisos sobre recursos que los Roles pueden otorgar
+  # Kubernetes requiere que tengas estos permisos para poder crear Roles que los otorguen
+  - apiGroups: [""]
+    resources: ["configmaps", "services", "endpoints", "pods"]
+    verbs: ["get", "list"]
 
 ---
 # ClusterRoleBinding: asocia el ServiceAccount de GitHub Actions con el ClusterRole
