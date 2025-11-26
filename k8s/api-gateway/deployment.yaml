@@ -18,6 +18,7 @@ spec:
       labels:
         app: api-gateway
     spec:
+      serviceAccountName: api-gateway-sa  # Usar ServiceAccount con permisos RBAC
       tolerations:
       - key: environment
         operator: Equal
@@ -62,7 +63,7 @@ metadata:
   labels:
     app: api-gateway
 spec:
-  type: LoadBalancer  # API Gateway necesita ser expuesto públicamente
+  type: ClusterIP  # Cambiado a ClusterIP porque el Ingress maneja el tráfico externo
   ports:
   - port: 8080
     targetPort: 8080
