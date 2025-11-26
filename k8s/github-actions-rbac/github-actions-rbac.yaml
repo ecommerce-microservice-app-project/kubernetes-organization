@@ -1,0 +1,50 @@
+---
+# ClusterRole para GitHub Actions: permite crear Roles y RoleBindings en namespaces
+# Este manifest debe aplicarse UNA VEZ manualmente por un administrador del cluster
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: github-actions-rbac-manager
+  labels:
+    app: github-actions
+rules:
+  # Permisos para crear/actualizar/eliminar Roles en namespaces
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles"]
+    verbs: ["get", "list", "create", "update", "patch", "delete"]
+  # Permisos para crear/actualizar/eliminar RoleBindings en namespaces
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["rolebindings"]
+    verbs: ["get", "list", "create", "update", "patch", "delete"]
+  # Permisos para crear/actualizar/eliminar ServiceAccounts en namespaces
+  - apiGroups: [""]
+    resources: ["serviceaccounts"]
+    verbs: ["get", "list", "create", "update", "patch", "delete"]
+
+---
+# ClusterRoleBinding: asocia el ServiceAccount de GitHub Actions con el ClusterRole
+# IMPORTANTE: Reemplaza <GCP_SERVICE_ACCOUNT_EMAIL> con el email real del ServiceAccount
+# Ejemplo: github-actions-prod@my-project.iam.gserviceaccount.com
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: github-actions-rbac-manager-binding
+  labels:
+    app: github-actions
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: github-actions-rbac-manager
+subjects:
+  # ServiceAccount de GCP usado por GitHub Actions en PRODUCCIÓN
+  - kind: User
+    name: github-actions-prod@tfg-prod-478914.iam.gserviceaccount.com
+    apiGroup: rbac.authorization.k8s.io
+  # Si tienes ServiceAccounts diferentes para dev/stage, agrégalos aquí:
+  # - kind: User
+  #   name: github-actions-dev@tfg-prod-478914.iam.gserviceaccount.com
+  #   apiGroup: rbac.authorization.k8s.io
+  # - kind: User
+  #   name: github-actions-stage@tfg-prod-478914.iam.gserviceaccount.com
+  #   apiGroup: rbac.authorization.k8s.io
+
