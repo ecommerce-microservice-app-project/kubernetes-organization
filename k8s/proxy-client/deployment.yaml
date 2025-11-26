@@ -18,7 +18,6 @@ spec:
       labels:
         app: proxy-client
     spec:
-      serviceAccountName: proxy-client-sa  # Usar ServiceAccount con permisos RBAC
       tolerations:
       - key: environment
         operator: Equal

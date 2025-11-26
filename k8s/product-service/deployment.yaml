@@ -18,7 +18,6 @@ spec:
       labels:
         app: product-service
     spec:
-      serviceAccountName: product-service-sa  # Usar ServiceAccount con permisos RBAC
       tolerations:
       - key: environment
         operator: Equal

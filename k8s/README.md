@@ -8,23 +8,19 @@ Este directorio contiene los manifiestos de Kubernetes para desplegar los micros
 k8s/
 ├── namespace.yaml              # Namespaces para dev, stage, prod
 ├── service-discovery/         # Service Discovery (Eureka)
-│   ├── deployment.yaml
-│   └── rbac.yaml              # RBAC: ServiceAccount, Role, RoleBinding
+│   └── deployment.yaml
 ├── cloud-config/              # Cloud Config Server
-│   ├── deployment.yaml
-│   └── rbac.yaml
+│   └── deployment.yaml
 ├── api-gateway/               # API Gateway
 │   ├── deployment.yaml
 │   ├── configmap.yaml
-│   ├── rbac.yaml
 │   ├── ingress-cert-manager.yaml  # Ingress con TLS (Cert-Manager)
 │   └── README-TLS.md          # Documentación TLS
 ├── cert-manager/              # Cert-Manager (Let's Encrypt)
 │   └── cluster-issuer.yaml
 ├── product-service/           # Product Service
 │   ├── deployment.yaml
-│   ├── configmap.yaml
-│   └── rbac.yaml
+│   └── configmap.yaml
 └── ... (resto de servicios)
 ```
 
@@ -38,25 +34,7 @@ Los servicios deben desplegarse en el siguiente orden debido a las dependencias:
 kubectl apply -f k8s/namespace.yaml
 ```
 
-### 2. RBAC (antes de los deployments)
-
-```bash
-# Aplicar RBAC para cada servicio (en orden de dependencias)
-kubectl apply -f k8s/service-discovery/rbac.yaml
-kubectl apply -f k8s/cloud-config/rbac.yaml
-kubectl apply -f k8s/api-gateway/rbac.yaml
-kubectl apply -f k8s/product-service/rbac.yaml
-kubectl apply -f k8s/order-service/rbac.yaml
-kubectl apply -f k8s/user-service/rbac.yaml
-kubectl apply -f k8s/shipping-service/rbac.yaml
-kubectl apply -f k8s/payment-service/rbac.yaml
-kubectl apply -f k8s/favourite-service/rbac.yaml
-kubectl apply -f k8s/proxy-client/rbac.yaml
-```
-
-Ver [RBAC.md](./RBAC.md) para más detalles.
-
-### 3. Service Discovery (Eureka) - Puerto 8761
+### 2. Service Discovery (Eureka) - Puerto 8761
 
 ```bash
 # Reemplazar <REGISTRY> y <NAMESPACE> según ambiente
@@ -65,7 +43,7 @@ sed -i 's|<NAMESPACE>|ecommerce-prod|g' k8s/service-discovery/deployment.yaml
 kubectl apply -f k8s/service-discovery/deployment.yaml
 ```
 
-### 4. Cloud Config - Puerto 9296
+### 3. Cloud Config - Puerto 9296
 
 ```bash
 sed -i 's|<REGISTRY>|docker.io/juanc7773|g' k8s/cloud-config/deployment.yaml
@@ -74,7 +52,7 @@ sed -i 's|<PROFILE>|prod|g' k8s/cloud-config/deployment.yaml
 kubectl apply -f k8s/cloud-config/deployment.yaml
 ```
 
-### 5. API Gateway - Puerto 8080
+### 4. API Gateway - Puerto 8080
 
 ```bash
 # Aplicar ConfigMap
@@ -90,7 +68,7 @@ kubectl apply -f k8s/api-gateway/deployment.yaml
 # Opcional: Configurar TLS con Cert-Manager (ver k8s/api-gateway/README-TLS.md)
 ```
 
-### 6. Microservicios de Negocio
+### 5. Microservicios de Negocio
 
 ```bash
 # Product Service - Puerto 8500
@@ -130,7 +108,7 @@ sed -i 's|<NAMESPACE>|ecommerce-prod|g' k8s/favourite-service/deployment.yaml
 kubectl apply -f k8s/favourite-service/deployment.yaml
 ```
 
-### 7. Proxy Client - Puerto 8900
+### 6. Proxy Client - Puerto 8900
 
 ```bash
 kubectl apply -f k8s/proxy-client/configmap.yaml
@@ -191,22 +169,6 @@ Cada servicio tiene límites de recursos configurados para optimizar el uso en c
 
 ## Seguridad
 
-### RBAC (Role-Based Access Control)
-
-Todos los servicios tienen configurado RBAC con permisos mínimos necesarios.
-
-- **ServiceAccount**: Identidad del pod dentro del cluster
-- **Role**: Permisos específicos en el namespace
-- **RoleBinding**: Asocia ServiceAccount con Role
-
-**Permisos otorgados:**
-- ConfigMaps: `get`, `list` - Para leer configuración
-- Services: `get`, `list` - Para service discovery
-- Endpoints: `get`, `list` - Para service discovery
-- Pods: `get`, `list` - Para health checks internos
-
-Ver [RBAC.md](./RBAC.md) para más detalles.
-
 ### TLS (Transport Layer Security)
 
 El API Gateway está configurado con TLS para comunicación HTTPS.
@@ -225,7 +187,6 @@ Ver [api-gateway/README-TLS.md](./api-gateway/README-TLS.md) para más detalles.
 
 ## Notas Importantes
 
-1. **Service Accounts**: Los deployments ya están configurados para usar los ServiceAccounts creados por RBAC
-2. **Tolerations**: Los deployments incluyen tolerations para taints de GKE (`environment=production`, `components.gke.io/gke-managed-components`)
-3. **Revision History**: `revisionHistoryLimit: 2` configurado para limitar ReplicaSets antiguos
-4. **Service Type**: API Gateway usa `ClusterIP` (el Ingress Controller maneja el tráfico externo)
+1. **Tolerations**: Los deployments incluyen tolerations para taints de GKE (`environment=production`, `components.gke.io/gke-managed-components`)
+2. **Revision History**: `revisionHistoryLimit: 2` configurado para limitar ReplicaSets antiguos
+3. **Service Type**: API Gateway usa `ClusterIP` (el Ingress Controller maneja el tráfico externo)

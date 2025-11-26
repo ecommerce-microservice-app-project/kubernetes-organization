@@ -9,48 +9,37 @@ kubernetes-organization/
 ├── k8s/                          # Manifests Kubernetes
 │   ├── namespace.yaml            # Namespaces para dev, stage, prod
 │   ├── service-discovery/        # Service Discovery (Eureka)
-│   │   ├── deployment.yaml
-│   │   └── rbac.yaml             # RBAC: ServiceAccount, Role, RoleBinding
+│   │   └── deployment.yaml
 │   ├── cloud-config/             # Cloud Config Server
-│   │   ├── deployment.yaml
-│   │   └── rbac.yaml
+│   │   └── deployment.yaml
 │   ├── api-gateway/              # API Gateway
 │   │   ├── deployment.yaml
 │   │   ├── configmap.yaml
-│   │   ├── rbac.yaml
 │   │   ├── ingress-cert-manager.yaml  # Ingress con TLS (Cert-Manager)
 │   │   └── README-TLS.md         # Documentación TLS
 │   ├── cert-manager/             # Cert-Manager (Let's Encrypt)
 │   │   └── cluster-issuer.yaml
 │   ├── product-service/          # Product Service
 │   │   ├── deployment.yaml
-│   │   ├── configmap.yaml
-│   │   └── rbac.yaml
+│   │   └── configmap.yaml
 │   ├── order-service/            # Order Service
 │   │   ├── deployment.yaml
-│   │   ├── configmap.yaml
-│   │   └── rbac.yaml
+│   │   └── configmap.yaml
 │   ├── user-service/             # User Service
 │   │   ├── deployment.yaml
-│   │   ├── configmap.yaml
-│   │   └── rbac.yaml
+│   │   └── configmap.yaml
 │   ├── shipping-service/         # Shipping Service
 │   │   ├── deployment.yaml
-│   │   ├── configmap.yaml
-│   │   └── rbac.yaml
+│   │   └── configmap.yaml
 │   ├── payment-service/          # Payment Service
 │   │   ├── deployment.yaml
-│   │   ├── configmap.yaml
-│   │   └── rbac.yaml
+│   │   └── configmap.yaml
 │   ├── favourite-service/        # Favourite Service
 │   │   ├── deployment.yaml
-│   │   ├── configmap.yaml
-│   │   └── rbac.yaml
+│   │   └── configmap.yaml
 │   ├── proxy-client/             # Proxy Client
 │   │   ├── deployment.yaml
-│   │   ├── configmap.yaml
-│   │   └── rbac.yaml
-│   ├── RBAC.md                   # Documentación RBAC
+│   │   └── configmap.yaml
 │   └── README.md                 # Guía de despliegue
 ├── scripts/                      # Scripts de utilidad
 │   └── generate-tls-cert.sh      # Generar certificados autofirmados
@@ -61,7 +50,6 @@ kubernetes-organization/
 
 ### 🔐 Seguridad
 
-- **RBAC (Role-Based Access Control)**: Cada servicio tiene ServiceAccount con permisos mínimos necesarios
 - **TLS/HTTPS**: API Gateway configurado con Cert-Manager y Let's Encrypt para certificados automáticos
 - **Escaneo de Vulnerabilidades**: Trivy integrado en pipelines CI/CD
 
@@ -85,5 +73,4 @@ Ver `k8s/README.md` para instrucciones detalladas de despliegue.
 ## Documentación
 
 - **Despliegue**: Ver `k8s/README.md`
-- **RBAC**: Ver `k8s/RBAC.md`
 - **TLS**: Ver `k8s/api-gateway/README-TLS.md`

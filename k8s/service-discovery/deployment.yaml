@@ -18,7 +18,6 @@ spec:
       labels:
         app: service-discovery
     spec:
-      serviceAccountName: service-discovery-sa  # Usar ServiceAccount con permisos RBAC
       tolerations:
       - key: environment
         operator: Equal

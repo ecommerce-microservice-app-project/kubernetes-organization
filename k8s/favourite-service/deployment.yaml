@@ -18,7 +18,6 @@ spec:
       labels:
         app: favourite-service
     spec:
-      serviceAccountName: favourite-service-sa  # Usar ServiceAccount con permisos RBAC
       tolerations:
       - key: environment
         operator: Equal
