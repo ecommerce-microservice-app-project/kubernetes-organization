@@ -10,7 +10,7 @@ spec:
     # Let's Encrypt production server
     server: https://acme-v02.api.letsencrypt.org/directory
     # Email para notificaciones (cambiar por tu email)
-    email: tu-email@ejemplo.com
+    email: juan_cg_g@hotmail.com
     # Almacenar clave privada en un Secret
     privateKeySecretRef:
       name: letsencrypt-prod
@@ -19,4 +19,15 @@ spec:
       - http01:
           ingress:
             class: nginx
+            podTemplate:
+              spec:
+                tolerations:
+                  - key: environment
+                    operator: Equal
+                    value: production
+                    effect: NoSchedule
+                  - key: components.gke.io/gke-managed-components
+                    operator: Equal
+                    value: "true"
+                    effect: NoSchedule
 
